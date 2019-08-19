@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from os import environ as env, getcwd
-path = env.get('PATH_PROJECT') or getcwd()
+from os import environ as env, getcwd, path
 
-BOT_NAME = 'pceuropa_net_yt'
+path = env.get('PATH_PROJECT') or path.dirname(__file__) or getcwd()
+
+COMMANDS_MODULE = 'yt.commands'
+
+BOT_NAME = 'pceuropa_yt'
 SPIDER_MODULES = ['yt.spiders']
 NEWSPIDER_MODULE = 'yt.spiders'
 
@@ -43,7 +46,7 @@ CONNECTION_STRING = f"mysql+mysqldb://{user}:{password_db}@{host}:{port}/{db_nam
 ROBOTSTXT_OBEY = True
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-# CONCURRENT_REQUESTS = 32
+CONCURRENT_REQUESTS = 28
 
 # Configure a delay for requests for the same website (default: 0)
 # See https://doc.scrapy.org/en/latest/topics/settings.html#download-delay
@@ -52,12 +55,18 @@ ROBOTSTXT_OBEY = True
 # The download delay setting will honor only one of:
 # CONCURRENT_REQUESTS_PER_DOMAIN = 16
 # CONCURRENT_REQUESTS_PER_IP = 16
-
+3
 # Disable cookies (enabled by default)
-# COOKIES_ENABLED = False
+COOKIES_ENABLED = 0
+REDIRECT_ENABLED = 0
+HTTPPROXY_ENABLED = 0
+RETRY_ENABLED = 0
+HTTPAUTH_ENABLED = 0
+REDIRECT_MAX_TIMES = 2
+
 
 # Disable Telnet Console (enabled by default)
-# TELNETCONSOLE_ENABLED = False
+TELNETCONSOLE_ENABLED = False
 
 # Override the default request headers:
 # DEFAULT_REQUEST_HEADERS = {
@@ -102,8 +111,8 @@ ITEM_PIPELINES = {
 
 # Enable and configure HTTP caching (disabled by default)
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html#httpcache-middleware-settings
-# HTTPCACHE_ENABLED = True
-# HTTPCACHE_EXPIRATION_SECS = 0
-# HTTPCACHE_DIR = 'httpcache'
-# HTTPCACHE_IGNORE_HTTP_CODES = []
-# HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+HTTPCACHE_ENABLED = False
+HTTPCACHE_EXPIRATION_SECS = 0
+HTTPCACHE_DIR = 'httpcache'
+HTTPCACHE_IGNORE_HTTP_CODES = []
+HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'

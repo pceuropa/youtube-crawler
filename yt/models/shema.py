@@ -30,6 +30,9 @@ class Main(object):
     def execute(self, sql):
         return connect.execute(text(sql)).fetchone()
 
+    def execute_all(self, sql):
+        return connect.execute(text(sql)).fetchall()
+
     def create_table(self):
         self._table.create(engine, checkfirst=True)
 

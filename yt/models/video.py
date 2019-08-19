@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 from yt.models.shema import Video
 
 """
@@ -54,6 +57,16 @@ class Video(Video):
 
     def find_all_yt_id(self) -> set:
         try:
-            return set(self.execute(f"select GROUP_CONCAT(`yt_id` SEPARATOR ',') from {self.table}")[0].split(','))
+            return set([x[0] for x in self.execute_all(f"select `yt_id` from {self.table}")])
         except Exception:
             return set()
+
+    def detect_language(self, limit: int = 100):
+        try:
+            return self.execute_all(f"select id, title, description, tags from {self.table} where language IS NULL LIMIT {limit}")
+        except Exception:
+            return None
+
+
+if __name__ == '__main__':
+    print('echo')

@@ -1,6 +1,7 @@
 from scrapy import Spider, Request
 from yt.models.video import Video
 import urllib.parse as urlparse
+from sys import getsizeof
 
 
 class YoutubeSpider(Spider):
@@ -8,12 +9,12 @@ class YoutubeSpider(Spider):
     allowed_domains = ['youtube.com']
     youtube = 'https://www.youtube.com/'
     model = Video()
-    start_yt_id: str = model.find_last_id() or "E3HsEPLsJJk"
+    start_yt_id: str = "E3HsEPLsJJk"  # or TODO random
     black_list_yt_ids: set = model.find_all_yt_id()
     start_urls: list = [f"{youtube}watch?v={start_yt_id}"]
 
     def __init__(self):
-        print(len(self.black_list_yt_ids))
+        print(len(self.black_list_yt_ids), str(int(getsizeof(self.black_list_yt_ids) / 8000000)) + 'mb')
 
     def start_requests(self):
         for url in self.start_urls:
@@ -48,10 +49,10 @@ class YoutubeSpider(Spider):
                     'interaction_count': int(r.xpath(f"//meta[@itemprop='interactionCount']/@content").get(0)),
                     'date_published': r.xpath("//meta[@itemprop='datePublished']/@content").get(),
                     'channel': r.xpath("//meta[@itemprop='channelId']/@content").get(),
-                    'category': r.xpath("//meta[@itemprop='genre']/@content").get(),
+                    'category': r.xpath("//meta[@itemprop='genre']/@content").get('None'),
+                    #'language': detect(title)
                     # 'content_region': '',
                     # 'ads': '',
-                    # 'locate': '',
                     # 'language': '',
                 }
         else:

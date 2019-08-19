@@ -10,7 +10,5 @@ class SqlAlchemy(object):
         """
         try:
             Video().insert(item)
-            print(f'inserted {item["yt_id"]}')
         except Exception as e:
-            print()
             print(e)
