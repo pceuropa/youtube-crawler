@@ -1,5 +1,5 @@
 from scrapy.commands import ScrapyCommand
-from yt.models.video import Video
+from yt.models.movie import Movie
 from langdetect import detect
 from textblob import TextBlob
 
@@ -10,8 +10,8 @@ class DetectLanguageCommand(ScrapyCommand):
         """
         Entry point for running commands
         """
-        video = Video()
-        for v in video.detect_language():
+        model = Movie()
+        for v in model.detect_language():
             self.detect_language(v[1])
             self.detect_language(v[2])
 

@@ -1,5 +1,6 @@
 from scrapy import Spider, Request
-from yt.models.video import Video
+from yt.models.movie import Movie
+from yt.models.movie_category import MovieCategory
 import urllib.parse as urlparse
 from sys import getsizeof
 
@@ -7,11 +8,12 @@ from sys import getsizeof
 class YoutubeSpider(Spider):
     name = 'youtube'
     allowed_domains = ['youtube.com']
-    youtube = 'https://www.youtube.com/'
-    model = Video()
-    start_yt_id: str = "E3HsEPLsJJk"  # or TODO random
+    youtube: str = 'https://www.youtube.com/'
+    model = Movie()
+    all_categories = MovieCategory().all_name()
+    start_yt_id: str = "8irSFvoyLHQ"  # or TODO random
     black_list_yt_ids: set = model.find_all_yt_id()
-    start_urls: list = [f"{youtube}watch?v={start_yt_id}"]
+    start_urls = [f"{youtube}watch?v={start_yt_id}"]
 
     def __init__(self):
         print(len(self.black_list_yt_ids), str(int(getsizeof(self.black_list_yt_ids) / 8000000)) + 'mb')
@@ -30,36 +32,37 @@ class YoutubeSpider(Spider):
             if yt_id not in self.black_list_yt_ids:
                 self.black_list_yt_ids.add(yt_id)
 
-                title = r.xpath('//title/text()').get('')
-                title = title.encode('ascii', 'ignore').decode('ascii').replace('YouTube', '').replace(' - ', ' ')
+                tags = r.xpath("//meta[@property='og:video:tag']/@content").getall()
+                tags = ','.join(set(x.lower() for x in tags))
+                tags = self.optymize_text(tags)
 
-                description = r.xpath('//p[@id="eow-description"]/text()').get(default='')
-                description = description.encode('ascii', 'ignore').decode('ascii').replace('YouTube', '')
+                duration = r.xpath("//meta[@itemprop='duration']/@content").get('PT0M0S')
+                duration_minutes, duration_sec = duration[2:-1].split('M')
+                duration = int(duration_minutes) * 60 + int(duration_sec)
 
                 yield {
-                    'title': title,
-                    'description': description,
-                    'tags': str(r.xpath("//meta[@property='og:video:tag']/@content").getall()),
+                    'title': self.optymize_text(r.xpath('//title/text()').get('')),
+                    'description': self.optymize_text(r.xpath('//p[@id="eow-description"]/text()').get('')),
+                    'tags': tags,
                     'regions_allowed': r.xpath("//meta[@itemprop='regionsAllowed']/@content").get(),
-                    'is_family_frendly': int('True' == r.xpath("//meta[@itemprop='isFamilyFriendly']/@content").get()),
-                    'image': r.xpath("//meta[@property='og:image']/@content").get(),
+                    'is_family_frendly': int('True' == r.xpath("//meta[@itemprop='isFamilyFriendly']/@content").get(0)),
                     'yt_id': yt_id,
                     'width': r.xpath("//meta[@itemprop='width']/@content").get(),
                     'height': r.xpath(f"//meta[@itemprop='height']/@content").get(),
                     'interaction_count': int(r.xpath(f"//meta[@itemprop='interactionCount']/@content").get(0)),
                     'date_published': r.xpath("//meta[@itemprop='datePublished']/@content").get(),
+                    'duration': duration,
                     'channel': r.xpath("//meta[@itemprop='channelId']/@content").get(),
-                    'category': r.xpath("//meta[@itemprop='genre']/@content").get('None'),
-                    #'language': detect(title)
-                    # 'content_region': '',
-                    # 'ads': '',
-                    # 'language': '',
+                    'category': self.all_categories.index(r.xpath("//meta[@itemprop='genre']/@content").get('None'))
                 }
         else:
             print('None found yt_id', yt_id)
 
         for href in r.xpath("//a[contains(@href,'watch?v=')]/@href"):
             yield r.follow(href, callback=self.parse)
+
+    def optymize_text(self, text):
+        return ''.join(c for c in text if c.isalnum() or c.isspace() or c == ',' or c == '.').replace('YouTube', '').replace('  ', ' ').strip()
 
     def meta(self, r, name):
         return r.xpath(f"//meta[@itemprop='{name}']/@content").get(),

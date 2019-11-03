@@ -46,7 +46,7 @@ CONNECTION_STRING = f"mysql+mysqldb://{user}:{password_db}@{host}:{port}/{db_nam
 ROBOTSTXT_OBEY = True
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-CONCURRENT_REQUESTS = 28
+CONCURRENT_REQUESTS = 10  # 28
 
 # Configure a delay for requests for the same website (default: 0)
 # See https://doc.scrapy.org/en/latest/topics/settings.html#download-delay

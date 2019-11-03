@@ -1,7 +1,8 @@
 from scrapy.utils.project import get_project_settings as settings
 from yt.logging import logging_slow_query
-from sqlalchemy import create_engine, insert, update, Column, Date, DateTime, MetaData, String, Table, Text, text
-from sqlalchemy.dialects.mysql import INTEGER, LONGTEXT, TINYINT
+from sqlalchemy import create_engine, insert, update, Column, Date, DateTime, Float, ForeignKey, MetaData, String, Table, Text, text
+from sqlalchemy.dialects.mysql import INTEGER, MEDIUMINT, SMALLINT, TINYINT
+
 
 if settings().get("DB_DEBUG"):
     logging_slow_query(settings().get('DB_LOGGER'))
@@ -47,34 +48,41 @@ class Main(object):
         return connect.execute(sql).fetchall()
 
 
-class Video(Main):
-    table: str = 'video'
+class Movie(Main):
+    table: str = 'movie'
     _table = Table(
         table, metadata,
         Column('id', INTEGER(9), primary_key=True),
-        Column('title', String(255), nullable=False),
-        Column('description', Text),
-        Column('category', String(55), nullable=False, server_default=text("'None'")),
-        Column('regions_allowed', LONGTEXT),
-        Column('education', TINYINT(2), server_default=text("0")),
-        Column('fast', TINYINT(1), server_default=text("0")),
-        Column('agresion', TINYINT(1)),
-        Column('rank', TINYINT(2), server_default=text("0")),
-        Column('created', DateTime, server_default=text("current_timestamp()")),
-        Column('updated', DateTime),
-        Column('image', String(255)),
-        Column('url', String(255)),
-        Column('yt_id', String(15), nullable=False, unique=True),
-        Column('width', INTEGER(11)),
-        Column('height', INTEGER(11)),
-        Column('content_region', String(5)),
-        Column('language', String(5)),
-        Column('thumbnail', String(255)),
-        Column('is_family_frendly', TINYINT(1)),
-        Column('interaction_count', INTEGER(25)),
+        Column('yt_id', String(15, 'utf8_unicode_ci'), nullable=False, unique=True),
+        Column('title', String(255, 'utf8_unicode_ci'), nullable=False),
+        Column('description', Text(collation='utf8_unicode_ci')),
+        Column('tags', Text(collation='utf8_unicode_ci')),
+        Column('category', ForeignKey('movie_category.id'), nullable=False, index=True, server_default=text("0")),
+        Column('is_family_frendly', TINYINT(1), server_default=text("0")),
+        Column('age', TINYINT(1), nullable=False, server_default=text("2")),
+        Column('rank', Float(3)),
+        # Column('education', Float(3)),
+        Column('effect', Float(3)),
+        Column('width', SMALLINT(1)),
+        Column('height', SMALLINT(1)),
+        Column('language', String(5, 'utf8_unicode_ci')),
+        Column('interaction_count', INTEGER(11), nullable=False, server_default=text("0")),
+        Column('channel', String(25, 'utf8_unicode_ci')),
+        Column('regions_allowed', Text(collation='utf8_unicode_ci')),
         Column('date_published', Date),
-        Column('channel', String(25)),
-        Column('ads', TINYINT(1)),
-        Column('locate', String(5)),
-        Column('tags', LONGTEXT)
+        Column('duration', MEDIUMINT(8), nullable=False, server_default=text("0")),
+        Column('created', DateTime, server_default=text("current_timestamp()")),
+        Column('updated', DateTime)
+    )
+
+
+class MovieCategory(Main):
+    table: str = 'movie_category'
+    _table = Table(
+        table, metadata,
+        Column('id', TINYINT(2), primary_key=True),
+        Column('name', String(255, 'utf8_unicode_ci'), nullable=False),
+        Column('safe', TINYINT(1)),
+        Column('created', DateTime, server_default=text("current_timestamp()")),
+        Column('updated', DateTime)
     )

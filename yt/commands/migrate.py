@@ -1,6 +1,8 @@
 from scrapy.commands import ScrapyCommand
+from yt.models.movie import Movie
 from elasticsearch import Elasticsearch
-from yt.models.shema import Video
+from elasticsearch import helpers
+from time import time
 
 es = Elasticsearch()
 
@@ -11,15 +13,47 @@ class MigrateCommand(ScrapyCommand):
         """
         Entry point for running commands
         """
-        print('elo')
-        video = Video()
+        helpers.bulk(es, self.gendata())
 
-        for v in video.find_all():
-            print(v)
+    def gendata(self):
+        t = time()
+        model = Movie()
+        i = 0
 
-        res = es.index(index="test2-index", doc_type='video-test2', id=2, body={
-            'author': 'kimchy',
-            'text': 'Elasticsearch: cool. bonsai cool.',
-        })
+        while True:
+            chunk_videos = model.get_chunk(i)
+            for v in chunk_videos:
+                yield {
+                    "_index": "i",
+                    "_type": "t",
+                    "_id": v[0],
+                    "_source": dict(v)
+                }
 
-        print('first res', res['result'])
+            print(len(chunk_videos))
+
+            if len(chunk_videos) < 100:
+                break
+
+            i += 100
+
+        print(time() - t)
+
+    def sequentialy(self):
+        t = time()
+        video = Movie()
+
+        i = 0
+        while True:
+            chunk_videos = video.get_chunk(i)
+            for v in chunk_videos:
+                res = es.index(index="test2-index", doc_type='video-test2', id=v[0], body=dict(v))
+                print('first res', res)
+
+            print(len(chunk_videos))
+
+            if len(chunk_videos) < 100:
+                break
+            i += 100
+
+        print(time() - t)

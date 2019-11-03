@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from yt.models.video import Video
+from yt.models.movie import Movie
 
 
 class SqlAlchemy(object):
@@ -9,6 +9,6 @@ class SqlAlchemy(object):
         This method is called for every item pipeline component.
         """
         try:
-            Video().insert(item)
+            Movie().insert(item)
         except Exception as e:
             print(e)
