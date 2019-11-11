@@ -32,11 +32,19 @@ class Movie(Movie):
         except Exception:
             return None
 
-    def find_all_yt_id(self) -> set:
+    def ids(self) -> set:
         try:
             return set([x[0] for x in self.execute_all(f"select `yt_id` from {self.table}")])
         except Exception:
             return set()
+
+    def channel_ids(self) -> tuple:
+        try:
+            all = set([x[0] for x in self.execute_all(f"SELECT DISTINCT channel FROM {self.table}")])
+            saved = set([x[0] for x in self.execute_all(f"SELECT DISTINCT channel_id FROM channel")])
+            return all - saved
+        except Exception:
+            return tuple()
 
     def detect_language(self, limit: int = 100):
         try:

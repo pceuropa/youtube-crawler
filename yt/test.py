@@ -1,5 +1,5 @@
 from scrapy.utils.project import get_project_settings as settings
-from yt.models.video import Video
+from yt.models.movie import Movie
 
 
 def test_settings():
@@ -7,14 +7,14 @@ def test_settings():
 
 
 class TestModelVideo(object):
-    video = Video()
+    movie = Movie()
 
     def test_find_id(self):
-        row = self.video.find(1)
+        row = self.movie.find(1)
         assert row[0] == 1
 
     def test_find_last_id(self):
-        assert isinstance(self.video.find_last_id(), str)
+        assert isinstance(self.movie.find_last_id(), str)
 
     def test_find_all_id(self):
-        assert isinstance(self.video.find_all_yt_id(), set)
+        assert isinstance(self.movie.ids(), set)

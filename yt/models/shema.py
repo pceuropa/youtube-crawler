@@ -1,6 +1,6 @@
 from scrapy.utils.project import get_project_settings as settings
 from yt.logging import logging_slow_query
-from sqlalchemy import create_engine, insert, update, Column, Date, DateTime, Float, ForeignKey, MetaData, String, Table, Text, text
+from sqlalchemy import create_engine, insert, update, Column, CHAR, Date, DateTime, Float, ForeignKey, MetaData, String, Table, Text, text
 from sqlalchemy.dialects.mysql import INTEGER, MEDIUMINT, SMALLINT, TINYINT
 
 
@@ -60,7 +60,7 @@ class Movie(Main):
         Column('category', ForeignKey('movie_category.id'), nullable=False, index=True, server_default=text("0")),
         Column('is_family_frendly', TINYINT(1), server_default=text("0")),
         Column('age', TINYINT(1), nullable=False, server_default=text("2")),
-        Column('rank', Float(3)),
+        # Column('rank', Float(3)),
         # Column('education', Float(3)),
         Column('effect', Float(3)),
         Column('width', SMALLINT(1)),
@@ -72,6 +72,23 @@ class Movie(Main):
         Column('date_published', Date),
         Column('duration', MEDIUMINT(8), nullable=False, server_default=text("0")),
         Column('created', DateTime, server_default=text("current_timestamp()")),
+        Column('updated', DateTime)
+    )
+
+
+class Channel(Main):
+    table: str = 'channel'
+    _table = Table(
+        table, metadata,
+        Column('channel_id', String(24), primary_key=True, unique=True),
+        Column('title', String(100), nullable=False),
+        Column('description', Text),
+        Column('age', TINYINT(1), server_default=text("9")),
+        Column('effect', TINYINT(1), server_default=text("2")),
+        Column('language', CHAR(2)),
+        Column('tag', String(900), nullable=False),
+        Column('category', TINYINT(1)),
+        Column('created', DateTime, nullable=False, server_default=text("current_timestamp()")),
         Column('updated', DateTime)
     )
 
