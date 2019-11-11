@@ -41,7 +41,7 @@ class YoutubeSpider(Spider):
                 'date_published': r.xpath("//meta[@itemprop='datePublished']/@content").get(),
                 'duration': duration,
                 'channel': r.xpath("//meta[@itemprop='channelId']/@content").get(),
-                'category': self.all_categories.index(r.xpath("//meta[@itemprop='genre']/@content").get('None'))
+                'category': r.xpath("//meta[@itemprop='genre']/@content").get('None')
             }
         else:
             print('None found yt_id', yt_id)
@@ -51,6 +51,3 @@ class YoutubeSpider(Spider):
 
     def optymize_text(self, text):
         return ''.join(c for c in text if c.isalnum() or c.isspace() or c == ',' or c == '.').replace('YouTube', '').replace('  ', ' ').strip()
-
-    def meta(self, r, name):
-        return r.xpath(f"//meta[@itemprop='{name}']/@content").get(),

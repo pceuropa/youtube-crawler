@@ -93,7 +93,8 @@ TELNETCONSOLE_ENABLED = False
 
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'yt.pipelines.SqlAlchemy': 300,
+    # 'yt.pipelines.SqlAlchemy': 300,
+    'yt.pipelines.Csv': 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
