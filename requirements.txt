@@ -47,7 +47,7 @@ more-itertools==7.2.0
 msgpack==0.6.1
 mysqlclient==1.4.2.post1
 netifaces==0.10.4
-nltk==3.4.3
+nltk==3.4.5
 oauthlib==2.1.0
 olefile==0.46
 packaging==19.0
