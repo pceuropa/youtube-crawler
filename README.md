@@ -1,4 +1,4 @@
-# youtube-crawler
+# Youtube Movie and Channel Crawler
 Youtube crawler &amp; scraper based on scrapy. Write in Python3.
 
 
@@ -18,6 +18,12 @@ ITEM_PIPELINES = {
     # 'yt.pipelines.SqlAlchemy': 300,
     'yt.pipelines.Csv': 300,
 }
+```
+
+RUNING
+----------
+```
+scrapy crawl youtube
 ```
 
 TESTING Model
