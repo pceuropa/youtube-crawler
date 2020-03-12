@@ -7,7 +7,8 @@ from time import time
 es = Elasticsearch()
 
 
-class MigrateCommand(ScrapyCommand):
+#  class MigrateCommand(ScrapyCommand):
+class MigrateCommand():
 
     def run(self, args, opts):
         """

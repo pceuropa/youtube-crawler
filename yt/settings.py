@@ -28,10 +28,10 @@ DB_LOGGER = {
 # DB SQL
 user = env.get('USER_DB') or "root"
 password_db = env.get('PASSWORD_DB') or ""
-host = env.get('HOST_DB') or "127.0.0.1"
+host = env.get('HOST_DB') or "localhost"
 port = env.get('PORT_DB') or "3306"
 db_name = env.get('DB_NAME') or "youtube"
-CONNECTION_STRING = f"mysql+mysqldb://{user}:{password_db}@{host}:{port}/{db_name}?charset=utf8"
+CONNECTION_STRING = f"mysql+pymysql://{user}:{password_db}@{host}:{port}/{db_name}?charset=utf8"
 
 # Scrapy settings for yt project
 #
@@ -55,7 +55,7 @@ CONCURRENT_REQUESTS = 10  # 28
 # The download delay setting will honor only one of:
 # CONCURRENT_REQUESTS_PER_DOMAIN = 16
 # CONCURRENT_REQUESTS_PER_IP = 16
-3
+
 # Disable cookies (enabled by default)
 COOKIES_ENABLED = 0
 REDIRECT_ENABLED = 0
@@ -94,7 +94,7 @@ TELNETCONSOLE_ENABLED = False
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
     # 'yt.pipelines.SqlAlchemy': 300,
-    'yt.pipelines.Csv': 300,
+    # 'yt.pipelines.Csv': 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
